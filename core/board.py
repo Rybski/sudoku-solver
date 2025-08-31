@@ -93,11 +93,15 @@ class Map:
         # self.cells_array = cells_array
         # self.cells = list(map(lambda a: Cell(a), cells))
         
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Map({self.cells})"
     
-    def __str__(self):
-        return f"{self.cells}"
+    def __str__(self) -> str:
+        _ = ''
+        for row in self.get_rows():
+            _ += f"{row}\n"
+        return _
+        
     
     def get_collumns(self) -> list[Cell]:
         columns = []
