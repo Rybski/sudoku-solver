@@ -11,6 +11,7 @@ def main():
     my_map = Map(load(Path("examples/1-unresolved.txt")))
     print(my_map)
 
+
 if __name__ == "__main__":
     main()
     pass
