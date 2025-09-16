@@ -1,6 +1,5 @@
 
-from types import NoneType
-from typing import Any, Iterable
+from typing import Iterable
 
 from core import meta
 
@@ -47,10 +46,12 @@ class Cell(set):
     def __repr__(self):
         if len(self) > 1:
             return f"Cell({0})"
-        return f"Cell({sorted(self)})"
+        return f"Cell({list(self)[0]})"
 
     def __str__(self):
-        return f"{sorted(self)}"
+        if len(self) > 1:
+            return f"{0}"
+        return f"{list(self)[0]}"
 
     def remove(self, digit: int):
         self.discard(Digit(digit))
@@ -62,8 +63,17 @@ class Map(list):
     """
     def __init__(self, cells: list[Cell]):
         super().__init__(cells)
-    
-            
+      
+    # 0  1  2  3  4  5  6  7  8
+    # 9  10 11 12 13 14 15 16 17
+    # 18 19 20 21 22 23 24 25 26
+    # 27 28 29 30 31 32 33 34 35
+    # 36 37 38 39 40 41 42 43 44
+    # 45 46 47 48 49 50 51 52 53
+    # 54 55 56 57 58 59 60 61 62
+    # 63 64 65 66 67 68 69 70 71
+    # 72 73 74 75 76 77 78 79 80
+      
     @classmethod
     def create(cls, data: None | list = None):
         if isinstance(data, type(None)):
@@ -82,11 +92,10 @@ class Map(list):
     def __repr__(self) -> str:
         return f"Map({self})"
     
-    
     def __str__(self) -> str:
         _ = ''
         for row in self.get_rows():
-            _ += f"{row}\n"
+            _ += f"{list(map(lambda _: str(_) , row))}\n"
         return _
     
     
@@ -100,7 +109,6 @@ class Map(list):
             cell (Cell): 
         """
         return self[index]
-    
     
     def get_cell(self, row: Digit | int, column: Digit | int) -> Cell:
         """Get Cell in specific Row and Column
@@ -117,7 +125,6 @@ class Map(list):
             index = (set(_) & set(__)).pop()
             return self.get_cell_by_index(index)
         raise Exception("Row or Column out of bounds")
-    
 
     def get_row_cells(self, row: Digit | int):
         """Get list of items in a row
@@ -133,7 +140,6 @@ class Map(list):
             return list(map(lambda _: self.get_cell_by_index(_), indexes))
         raise Exception("Row out of bounds")  
     
-    
     def get_rows(self):
         """Get a list of all rows
 
@@ -144,7 +150,6 @@ class Map(list):
         if indexes is not None:
             return list(map(lambda _: list(map(self.get_cell_by_index, _)), indexes))
         raise Exception("Could not get Indexes from Meta tables")
-    
     
     def get_row(self, index):
         """Get a Row of an index
@@ -160,7 +165,6 @@ class Map(list):
             return _
         raise Exception("index out of bounds")
     
-    
     def get_column_cells(self, column):
         """Get list of items in a column
 
@@ -175,7 +179,6 @@ class Map(list):
             return list(map(lambda _: self.get_cell_by_index(_), indexes))
         raise Exception("Column out of bounds")    
         
-        
     def get_columns(self):
         """Get a list of all columns
 
@@ -186,7 +189,6 @@ class Map(list):
         if indexes is not None:
             return list(map(lambda _: list(map(self.get_cell_by_index, _)), indexes))
         raise Exception("Could not get Indexes from Meta tables")
-    
     
     def get_column(self, index):
         """Get a Column of an index
@@ -202,18 +204,6 @@ class Map(list):
             return _
         raise Exception("index out of bounds")
 
-
-# 0  1  2  3  4  5  6  7  8
-# 9  10 11 12 13 14 15 16 17
-# 18 19 20 21 22 23 24 25 26
-# 27 28 29 30 31 32 33 34 35
-# 36 37 38 39 40 41 42 43 44
-# 45 46 47 48 49 50 51 52 53
-# 54 55 56 57 58 59 60 61 62
-# 63 64 65 66 67 68 69 70 71
-# 72 73 74 75 76 77 78 79 80
-
-    
     def get_box_cells(self, box):
         """Get list of items in a box
 
@@ -227,7 +217,6 @@ class Map(list):
         if indexes is not None:
             return list(map(lambda _: self.get_cell_by_index(_), indexes))
         raise Exception("Box out of bounds")    
-    
     
     def get_boxes(self):
         """Get a list of all boxes
