@@ -1,36 +1,23 @@
 from core.board import Map
 
-def verify(map: Map) -> bool:
-    if not check_rows(map):
+def is_valid(sudoku_map: Map) -> bool:
+    if not all(map(lambda _: check_unique(_), sudoku_map.get_rows())):
         return False
-    if not check_columns(map):
+    if not all(map(lambda _: check_unique(_), sudoku_map.get_columns())):
         return False
-    if not check_boxes(map):
+    if not all(map(lambda _: check_unique(_), sudoku_map.get_boxes())):
         return False
-    return True
-    
-def check_rows(map: Map) -> bool:
-    for row in map.get_rows():
-        if not check_set(row):
-            return False
-        if not check_unique(row):
-            return False
     return True
 
-def check_columns(map: Map) -> bool:
-    for row in map.get_columns():
-        if not check_set(row):
-            return False
-        if not check_unique(row):
-            return False
-    return True
-
-def check_boxes(map: Map) -> bool:
-    for row in map.get_boxes():
-        if not check_set(row):
-            return False
-        if not check_unique(row):
-            return False
+def is_solved(sudoku_map: Map) -> bool:
+    if not is_valid(sudoku_map):
+        return False
+    if not all(map(lambda _: check_set(_), sudoku_map.get_rows())):
+        return False
+    if not all(map(lambda _: check_set(_), sudoku_map.get_columns())):
+        return False
+    if not all(map(lambda _: check_set(_), sudoku_map.get_boxes())):
+        return False
     return True
         
 def check_set(cells: list) -> bool:
@@ -41,6 +28,11 @@ def check_set(cells: list) -> bool:
     return True
 
 def check_unique(cells: list) -> bool:
+    if False:
+        return False
+    return True
+
+def check_unique_old(cells: list) -> bool:
     if not len(set(map(lambda _: list(_)[0], cells))) == 9:
         return False
     return True

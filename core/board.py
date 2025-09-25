@@ -43,23 +43,51 @@ class Cell(set):
 
         raise Exception("Invalid type") 
 
-    def __repr__(self):
-        if len(self) > 1:
-            return f"Cell({0})"
-        return f"Cell({list(self)[0]})"
+    @classmethod
+    def create_empty(cls, digits: None | int | list | set | tuple = None):
+        if(isinstance(digits, type(None))):
+            return cls({})
 
-    def __str__(self):
-        if len(self) > 1:
-            return f"{0}"
-        return f"{list(self)[0]}"
+        if(isinstance(digits, int)):
+            if digits == 0: # We might want to store unresolved fields as 0 inside the files...
+                return cls({})
+            return cls({Digit(digits)})
+
+        if(isinstance(digits, (list, set, tuple))):
+            if all(isinstance(_, int) for _ in digits):
+                return cls(set(map(lambda _: Digit(_), digits)))
+
+        raise Exception("Invalid type") 
+    
+    # def __repr__(self):
+    #     if len(self) > 1:
+    #         return f"Cell({0})"
+    #     return f"Cell({list(self)[0]})"
+
+    # def __str__(self):
+    #     if len(self) > 1:
+    #         return f"{0}"
+    #     return f"{list(self)[0]}"
+    
+    def is_set(self) -> bool:
+        if len(self) == 1:
+            return True
+        if 1 < len(self) <= 9:
+            return False
+        raise ValueError("cell len is incorrect")
+    
+    def get_possibilites(self):
+        return f"{self}"
 
     def remove(self, digit: int):
         self.discard(Digit(digit))
 
+    def clone(self) -> "Cell":
+        return Cell(self.copy())
 
 class Map(list):
     """
-    Stores sudoku data in a flat list[]. Each value is a list of possibilities that can occur in a cell. Oncea Cell reaches one possibility it is set
+    Stores sudoku data iSn a flat list[]. Each value is a list of possibilities that can occur in a cell. Oncea Cell reaches one possibility it is set
     """
     def __init__(self, cells: list[Cell]):
         super().__init__(cells)
@@ -85,9 +113,30 @@ class Map(list):
                     return cls(list(map(lambda _: Cell.create(_), data))) # coverts all numbers inside the list of values into a cell
                 else:
                     raise Exception("Invalid size of the Map")
-            
+            if all(isinstance(_, Cell) for _ in data):
+                if len(data) == 81:
+                    return cls(list(data))
+                else:
+                    raise Exception("Invalid size of the Map")
         raise Exception("Invalid type") 
 
+    @classmethod
+    def create_empty(cls, data: None | list = None):
+        if isinstance(data, type(None)):
+            return cls([Cell.create_empty() for _ in range(81)]) # return a list filled with empty Cells
+        
+        if isinstance(data, list):
+            if all(isinstance(_, int) for _ in data):
+                if len(data) == 81:
+                    return cls(list(map(lambda _: Cell.create_empty(_), data))) # coverts all numbers inside the list of values into a cell
+                else:
+                    raise Exception("Invalid size of the Map")
+            if all(isinstance(_, Cell) for _ in data):
+                if len(data) == 81:
+                    return cls(list(data))
+                else:
+                    raise Exception("Invalid size of the Map")
+        raise Exception("Invalid type") 
 
     def __repr__(self) -> str:
         return f"Map({self})"
@@ -97,7 +146,6 @@ class Map(list):
         for row in self.get_rows():
             _ += f"{list(map(lambda _: str(_) , row))}\n"
         return _
-    
     
     def get_cell_by_index(self, index: int) -> Cell:
         """Get Cell in specific Index
@@ -165,6 +213,21 @@ class Map(list):
             return _
         raise Exception("index out of bounds")
     
+    def get_row_others_indexes(self, index):
+        """Get a List of other indexes in a Row
+
+        Args:
+            index (int):
+
+        Returns:
+            indexes (list):
+        """   
+        row = meta.INDEX_TO_ROW[index]
+        indexes = meta.ROW_TO_INDEXES[row]
+        indexes = list(indexes)
+        indexes.remove(index)
+        return indexes
+    
     def get_column_cells(self, column):
         """Get list of items in a column
 
@@ -204,6 +267,21 @@ class Map(list):
             return _
         raise Exception("index out of bounds")
 
+    def get_column_others_indexes(self, index):
+        """Get a List of other indexes in a Column
+
+        Args:
+            index (int):
+
+        Returns:
+            indexes (list):
+        """   
+        column = meta.INDEX_TO_COLUMN[index]
+        indexes = meta.COLUMN_TO_INDEXES[column]
+        indexes = list(indexes)
+        indexes.remove(index)
+        return indexes
+    
     def get_box_cells(self, box):
         """Get list of items in a box
 
@@ -242,3 +320,37 @@ class Map(list):
         if _ is not None:
             return _
         raise Exception("index out of bounds")
+
+    def get_box_others_indexes(self, index):
+        """Get a List of other indexes in a Box
+
+        Args:
+            index (int):
+
+        Returns:
+            indexes (list):
+        """   
+        box = meta.INDEX_TO_BOX[index]
+        indexes = meta.BOX_TO_INDEXES[box]
+        indexes = list(indexes)
+        indexes.remove(index)
+        return indexes
+
+    def update(self, other: "Map") -> "Map":
+        for cell_s, cell_o in zip(self, other):
+            cell_s.update(cell_o)
+        return self
+    
+    def difference(self, other: "Map") -> "Map":
+        for cell_s, cell_o in zip(self, other):
+            cell_s.difference_update(cell_o)
+        return self
+    
+    def is_identical(self, other: "Map") -> bool:
+        for cell_s, cell_o in zip(self, other):
+            if cell_s != cell_o:
+                return False
+        return True
+        
+    def clone(self) -> "Map":
+        return Map(list(map(lambda _: Cell(_.clone()), self)))
