@@ -87,7 +87,7 @@ class Cell(set):
 
 class Map(list):
     """
-    Stores sudoku data iSn a flat list[]. Each value is a list of possibilities that can occur in a cell. Oncea Cell reaches one possibility it is set
+    Stores sudoku data in a flat list[]. Each value is a list of possibilities that can occur in a cell. Oncea Cell reaches one possibility it is set
     """
     def __init__(self, cells: list[Cell]):
         super().__init__(cells)
