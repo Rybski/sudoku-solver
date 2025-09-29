@@ -1,14 +1,14 @@
 from itertools import chain
 from pathlib import Path
+from typer import FileText, FileTextWrite
 
 
-def load(filepath: str) -> list[int]:
-    with open(Path(filepath), "r") as file:
-        return list(map(int, filter(str.isdigit, chain.from_iterable(file))))
+def load(file: FileText) -> list[int]:
+    data = file.read()
+    return list(map(int, filter(str.isdigit, chain.from_iterable(data))))
 
-def save(filepath: str, data: str):
-    with open(Path(filepath), 'w') as f:
-        rows = data.split('\n')
-        for row in rows:
-            f.write(row)
-            f.write('\n')
+def save(file: FileTextWrite, data: str):
+    rows = data.split('\n')
+    for row in rows:
+        file.write(row)
+        file.write('\n')

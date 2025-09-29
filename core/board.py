@@ -59,15 +59,15 @@ class Cell(set):
 
         raise Exception("Invalid type") 
     
-    # def __repr__(self):
-    #     if len(self) > 1:
-    #         return f"Cell({0})"
-    #     return f"Cell({list(self)[0]})"
+    def __repr__(self):
+        if len(self) > 1:
+            return f"Cell({0})"
+        return f"Cell({list(self)[0]})"
 
-    # def __str__(self):
-    #     if len(self) > 1:
-    #         return f"{0}"
-    #     return f"{list(self)[0]}"
+    def __str__(self):
+        if len(self) > 1:
+            return f"{0}"
+        return f"{list(self)[0]}"
     
     def is_set(self) -> bool:
         if len(self) == 1:
@@ -142,9 +142,9 @@ class Map(list):
         return f"Map({self})"
     
     def __str__(self) -> str:
-        _ = ''
+        _ = '\n'
         for row in self.get_rows():
-            _ += f"{list(map(lambda _: str(_) , row))}\n"
+            _ += f"    {list(map(lambda _: str(_) , row))}\n"
         return _
     
     def get_cell_by_index(self, index: int) -> Cell:
