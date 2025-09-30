@@ -1,9 +1,15 @@
-                                                                                                
- Usage: main.py [OPTIONS] COMMAND [ARGS]...                                                     
-                                                                                                
- CLI sudoku solver                                                                              
-                                                                                                
-                                                                                                
+CLI sudoku solver
+=================
+A cli tool for solving sudoku maps written in Python
+
+Installation
+------------
+python -m pip install -r requirements.txt
+
+Usage
+-----
+python main.py [OPTIONS] COMMAND [ARGS]...
+
 Options
 -------
 - --install-completion   Install completion for the current shell.
