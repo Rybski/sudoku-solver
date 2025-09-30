@@ -1,10 +1,11 @@
+from sys import stdout
 import typer
 from rich import print
 from rich.live import Live
 
 from core.board import Map, Cell, Digit
 from core.io import load, save
-from core.verifier import is_valid, is_solved
+from core.verifier import is_empty, is_valid, is_solved
 from core.visualizer import build_visualization
 from core.solver import strategies, apply_mutation_mask
 from core.staus import Status
@@ -46,6 +47,8 @@ def solve(
     
     if is_solved(sudoku_map):
         status = Status.SOLVED
+    elif is_empty(sudoku_map):
+        status = Status.EMPTY
     else:
         status = Status.UNSOLVED
     
@@ -89,7 +92,7 @@ def solve(
     save(outfile, str(sudoku_map)) # Default name to be saved should be build from opened filename and exit status
 
 @app.command()
-def verify(
+def  check(
     infile: typer.FileText = typer.Argument("-", help="Input file (default: stdin)",), 
     outfile: typer.FileTextWrite = typer.Option("-", "--output", "-o", help="Output file (default: stdout)",),
     ):
@@ -99,11 +102,16 @@ def verify(
     
     if not is_valid(sudoku_map):
         status = Status.INVALID
-    if is_solved(sudoku_map):
+    elif is_solved(sudoku_map):
         status = Status.SOLVED
+    elif is_empty(sudoku_map):
+        status = Status.EMPTY
     else:
         status = Status.UNSOLVED
-    save(outfile, str(status.get_state())) # should I print there to the stdio?
+    
+    if outfile.name != stdout.name:
+        print(f"{status}")
+    save(outfile, str(status.get_state()))
 
 
 if __name__ == "__main__":

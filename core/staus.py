@@ -6,6 +6,7 @@ META_COLORED_TXT = {
     2: "[red]STUCK[/red]",
     3: "[red]INVALID[/red]",
     4: "[gray]UNKNOWN[/gray]",
+    5: "[gray]EMPTY[/gray]"
 }
 
 META_TXT = {
@@ -14,6 +15,7 @@ META_TXT = {
     2: "STUCK",
     3: "INVALID",
     4: "UNKNOWN",
+    5: "EMPTY",
 }
 
 META_TERMINABLE = {
@@ -22,6 +24,7 @@ META_TERMINABLE = {
     2: True,
     3: True,
     4: True,
+    5: True,
 }
 
 class Status(IntFlag):
@@ -30,6 +33,7 @@ class Status(IntFlag):
     STUCK = 2
     INVALID = 3
     UNKNOWN = 4
+    EMPTY = 5
     
     def __str__(self) -> str:
         return META_COLORED_TXT.get(self, "[red]BAD STATE[/red]")
